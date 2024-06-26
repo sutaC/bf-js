@@ -1,6 +1,8 @@
 // @ts-check
 import readline from "readline/promises";
 
+console.log(process.argv);
+
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
