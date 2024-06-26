@@ -1,22 +1,33 @@
 // @ts-check
-import readline from "readline/promises";
+import readline from "node:readline/promises";
+import fs from "node:fs/promises";
+import path from "node:path";
 
-console.log(process.argv);
-
+// Reads file
+const file = "./hello.bf";
+const ext = path.extname(file);
+if (ext !== ".bf") {
+    throw new Error(`Cannot resolve files that are not in ".bf" extension`);
+}
+try {
+    await fs.access(file);
+} catch (err) {
+    throw new Error(`Could not access given path file:\n${err}`);
+}
+const code = (await fs.readFile(file)).toString();
+// Setup std I/O
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
 });
 
-const code =
-    ">+++++++++[<++++++++>-]<.>+++++++[<++++>-]<+.+++++++..+++.[-]>++++++++[<++++>-] <.>+++++++++++[<++++++++>-]<-.--------.+++.------.--------.[-]>++++++++[<++++>- ]<+.[-]++++++++++.";
-
-const data = /** @type {number[]} */ (new Array(30000)).fill(0);
-let dp = 0;
-
+// Interpreter setup
+const data = /** @type {number[]} */ new Array(30000).fill(0);
 const sBrackets = /** @type {number[]} */ [];
 const eBrackets = /** @type {number[]} */ [];
+let dp = 0;
 
+// Interpreter run
 for (let i = 0; i < code.length; i++) {
     switch (code[i]) {
         case "+":
@@ -76,4 +87,5 @@ for (let i = 0; i < code.length; i++) {
     }
 }
 
+// Cleanup
 rl.close();
