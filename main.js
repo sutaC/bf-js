@@ -1,20 +1,22 @@
 // @ts-check
 import readline from "node:readline/promises";
 import fs from "node:fs/promises";
-import path from "node:path";
-
-// Reads file
-const file = "./hello.bf";
-const ext = path.extname(file);
-if (ext !== ".bf") {
-    throw new Error(`Cannot resolve files that are not in ".bf" extension`);
+// Reads args
+if (process.argv.length !== 3) {
+    throw new Error(
+        `Command accepts 1 argument in format:\ncmd [file-path]\nbut provided ${
+            process.argv.length - 2
+        }`
+    );
 }
+const path = process.argv[2];
+// Reads file
 try {
-    await fs.access(file);
+    await fs.access(path);
 } catch (err) {
     throw new Error(`Could not access given path file:\n${err}`);
 }
-const code = (await fs.readFile(file)).toString();
+const code = (await fs.readFile(path)).toString();
 // Setup std I/O
 const rl = readline.createInterface({
     input: process.stdin,
@@ -55,7 +57,6 @@ for (let i = 0; i < code.length; i++) {
         case "[":
             sBrackets.push(i);
             if (data[dp] !== 0) break;
-
             for (let j = i + 1; j < code.length; j++) {
                 if (code[j] === "[") {
                     sBrackets.push(j);
@@ -64,12 +65,10 @@ for (let i = 0; i < code.length; i++) {
                 }
                 if (sBrackets.length === eBrackets.length) break;
             }
-
             if (sBrackets.length !== eBrackets.length)
                 throw new Error(
                     `Could not find ending bracket for starting bracket on ${i}`
                 );
-
             sBrackets.pop();
             i = /** @type {number} */ (eBrackets.pop());
             break;
@@ -81,7 +80,6 @@ for (let i = 0; i < code.length; i++) {
             const lastBr = /** @type {number} */ (sBrackets.pop());
             i = lastBr - 1;
             break;
-
         default:
             break;
     }
