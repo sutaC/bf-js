@@ -1,0 +1,12 @@
+{
+    "name": "bf.js",
+    "version": "1.0.0",
+    "description": "Brainfuck js interpreter",
+    "main": "main.js",
+    "scripts": {
+        "start": "node ."
+    },
+    "keywords": [],
+    "author": "sutaC",
+    "license": "ISC"
+}
