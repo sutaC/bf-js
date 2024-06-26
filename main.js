@@ -7,7 +7,7 @@ const rl = readline.createInterface({
 });
 
 const code =
-    "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.";
+    ">+++++++++[<++++++++>-]<.>+++++++[<++++>-]<+.+++++++..+++.[-]>++++++++[<++++>-] <.>+++++++++++[<++++++++>-]<-.--------.+++.------.--------.[-]>++++++++[<++++>- ]<+.[-]++++++++++.";
 
 const data = /** @type {number[]} */ (new Array(30000)).fill(0);
 let dp = 0;
@@ -21,7 +21,7 @@ for (let i = 0; i < code.length; i++) {
             data[dp]++;
             break;
         case "-":
-            data[dp]++;
+            data[dp]--;
             break;
         case ">":
             dp++;
@@ -40,13 +40,37 @@ for (let i = 0; i < code.length; i++) {
             data[dp] = res.charCodeAt(0);
             break;
         case "[":
-            // TODO
+            sBrackets.push(i);
+            if (data[dp] !== 0) break;
+
+            for (let j = i + 1; j < code.length; j++) {
+                if (code[j] === "[") {
+                    sBrackets.push(j);
+                } else if (code[j] === "]") {
+                    eBrackets.push(j);
+                }
+                if (sBrackets.length === eBrackets.length) break;
+            }
+
+            if (sBrackets.length !== eBrackets.length)
+                throw new Error(
+                    `Could not find ending bracket for starting bracket on ${i}`
+                );
+
+            sBrackets.pop();
+            i = /** @type {number} */ (eBrackets.pop());
             break;
         case "]":
-            // TODO
+            if (sBrackets.length === 0)
+                throw new Error(
+                    `Could not find starting bracket for end bracket on ${i}`
+                );
+            const lastBr = /** @type {number} */ (sBrackets.pop());
+            i = lastBr - 1;
             break;
+
         default:
-            continue;
+            break;
     }
 }
 
